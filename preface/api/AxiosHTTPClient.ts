@@ -1,45 +1,14 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { BASE_URL } from "lib/constants";
-import type { IAxiosHTTPClient } from "./interface";
+import axios, { AxiosRequestConfig } from "axios";
 
-class AxiosHTTPClient implements IAxiosHTTPClient {
-  private instance;
-  constructor() {
-    this.instance = axios.create({ baseURL: BASE_URL });
+class AxiosInstance {
+  private baseURL;
+  private config;
+  constructor(baseURL: string, config?: AxiosRequestConfig) {
+    this.baseURL = baseURL;
+    this.config = config;
   }
-
-  get = async <TData, TError>(
-    endPoint: string,
-    config?: AxiosRequestConfig
-  ) => {
-    try {
-      const response = await this.instance.get<TData>(endPoint, { ...config });
-      return response;
-    } catch (error) {
-      if (error instanceof AxiosError<TError>) {
-        return error;
-      }
-    }
-  };
-
-  post = async <TData, TError, TVariable>(
-    endPoint: string,
-    data: TVariable,
-    config?: AxiosRequestConfig
-  ) => {
-    try {
-      const response = await this.instance.post<TData>(
-        endPoint,
-        { ...data },
-        { ...config }
-      );
-      return response;
-    } catch (error) {
-      if (error instanceof AxiosError<TError>) {
-        return error;
-      }
-    }
-  };
+  instance() {
+    return axios.create({ baseURL: this.baseURL, ...this.config });
+  }
 }
-
-export default AxiosHTTPClient;
+export default AxiosInstance;
