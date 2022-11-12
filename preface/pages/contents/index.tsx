@@ -1,8 +1,9 @@
 import { Layout } from "components/Layout";
+
 import React from "react";
 
-const index = () => {
+const Content = () => {
   return <Layout>index</Layout>;
 };
 
-export default index;
+export default Content;
