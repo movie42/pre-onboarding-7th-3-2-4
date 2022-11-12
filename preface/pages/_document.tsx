@@ -1,10 +1,4 @@
-import Document, {
-  DocumentContext,
-  Html,
-  Main,
-  Head,
-  NextScript
-} from "next/document";
+import Document, { DocumentContext } from "next/document";
 
 import { ServerStyleSheet } from "styled-components";
 
@@ -29,23 +23,5 @@ export default class MyDocument extends Document {
     } finally {
       sheet.seal();
     }
-  }
-
-  render(): JSX.Element {
-    return (
-      <Html>
-        <Head>
-          <link
-            href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css"
-            rel="stylesheet"
-            type="text/css"
-          />
-        </Head>
-        <body>
-          <Main />
-          <NextScript />
-        </body>
-      </Html>
-    );
   }
 }
