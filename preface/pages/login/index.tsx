@@ -1,11 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import tw from "tailwind-styled-components";
 
 import logo from "public/images/logo.png";
 import ImageContainer from "components/Image/ImageContainer";
 
+import useLogin from "lib/hooks/useLogin";
+
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { mutate } = useLogin();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (email && password) {
+      mutate({ email, password });
+    }
+  };
+
   return (
     <Container className="grid place-content-center h-vh100">
       <div className="grid w-72">
@@ -22,18 +36,25 @@ const Login = () => {
           <div className="px-4 py-4 bg-gray-100">
             <h2 className="text-gray-800">로그인</h2>
           </div>
-          <form className="flex flex-col py-6 px-3 box-border">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col py-6 px-3 box-border"
+          >
             <input
               className="border p-2 mb-3"
-              type="text"
+              type="email"
               placeholder="아이디를 입력하세요"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
             />
             <input
               className="border p-2 mb-3"
               type="password"
               placeholder="비밀번호를 입력하세요"
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
             />
-            <Button disabled>로그인</Button>
+            <Button disabled={!email && !password}>로그인</Button>
           </form>
         </FormContainer>
 
@@ -62,14 +83,19 @@ const FormContainer = styled.div``;
 const Copyright = styled.h3``;
 
 const Button = tw.button<{ disabled: boolean }>`
-${({ disabled }) => {
-  if (disabled) {
+  p-2
+  ${({ disabled }) => {
+    if (disabled) {
+      return `
+        text-gray-400
+        bg-gray-100
+        
+      `;
+    }
     return `
-      text-gray-400
-      bg-gray-100
-      p-2
+      text-white
+      bg-primary2 
     `;
-  }
-}}
+  }}
   
 `;

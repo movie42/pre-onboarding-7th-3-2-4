@@ -6,7 +6,7 @@ interface IImageProps {
 }
 
 const ImageContainer = ({ imageProps }: IImageProps) => {
-  return <Image {...imageProps} />;
+  return <Image {...imageProps} alt={imageProps.alt} />;
 };
 
 export default ImageContainer;
