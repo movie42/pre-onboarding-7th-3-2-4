@@ -1,12 +1,10 @@
-import AxiosInstance from "api/AxiosHTTPClient";
 import { AxiosError } from "axios";
-import { BASE_URL } from "lib/constants";
+import { SERVER_BASE_URL } from "lib/constants";
 import { IUser } from "model/interface";
 import type { NextApiRequest, NextApiResponse } from "next";
 import AuthService from "service/AuthService";
 
-const axios = new AxiosInstance(BASE_URL);
-const authService = new AuthService(axios.instance());
+const authService = new AuthService(SERVER_BASE_URL);
 
 export default async function loginHandler(
   req: NextApiRequest,

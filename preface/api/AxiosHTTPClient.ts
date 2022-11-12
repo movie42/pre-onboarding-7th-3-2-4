@@ -1,14 +1,9 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
-class AxiosInstance {
-  private baseURL;
-  private config;
+abstract class AxiosHTTPClient {
+  protected readonly instance: AxiosInstance;
   constructor(baseURL: string, config?: AxiosRequestConfig) {
-    this.baseURL = baseURL;
-    this.config = config;
-  }
-  instance() {
-    return axios.create({ baseURL: this.baseURL, ...this.config });
+    this.instance = axios.create({ baseURL, ...config });
   }
 }
-export default AxiosInstance;
+export default AxiosHTTPClient;
