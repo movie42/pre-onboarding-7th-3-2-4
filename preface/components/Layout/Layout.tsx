@@ -26,4 +26,6 @@ export default Layout;
 
 const Container = styled.div``;
 
-const MainContentContainer = styled.div``;
+const MainContentContainer = styled.div`
+  background-color: ${(props) => props.theme.colors.gray1};
+`;

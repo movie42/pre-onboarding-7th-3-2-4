@@ -1,20 +1,32 @@
 import "../styles/font.css";
 import "tailwindcss/tailwind.css";
+import { ReactElement, ReactNode } from "react";
+import { NextPage } from "next";
 import type { AppProps } from "next/app";
-import { ThemeProvider } from "styled-components";
-import { theme } from "styles/theme";
-import GlobalStyle from "styles/GlobalStyle";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { ThemeProvider } from "styled-components";
+
+import GlobalStyle from "styles/GlobalStyle";
+import { theme } from "styles/theme";
 
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <GlobalStyle />
-          <Component {...pageProps} />
+          {getLayout(<Component {...pageProps} />)}
         </ThemeProvider>
       </QueryClientProvider>
     </>

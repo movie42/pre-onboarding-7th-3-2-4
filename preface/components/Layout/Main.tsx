@@ -6,7 +6,7 @@ interface IMainProps {
 }
 
 const Main = ({ children }: IMainProps) => {
-  return <Container>{children}</Container>;
+  return <Container className="pt-6 px-3">{children}</Container>;
 };
 
 export default Main;
