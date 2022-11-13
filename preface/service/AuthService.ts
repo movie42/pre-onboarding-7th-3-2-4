@@ -1,6 +1,6 @@
 import { AxiosHTTPClient } from "api";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
-import type { IUser } from "model/interface";
+import type { IToken } from "model/interface";
 import type { IAuthService, IUserVariable } from "./interface";
 
 class AuthService extends AxiosHTTPClient implements IAuthService {
@@ -10,8 +10,8 @@ class AuthService extends AxiosHTTPClient implements IAuthService {
 
   login = async (endPoint: string, { email, password }: IUserVariable) => {
     const response = await this.instance.post<
-      IUser,
-      AxiosResponse<IUser, any>,
+      IToken,
+      AxiosResponse<IToken, any>,
       IUserVariable
     >(endPoint, {
       email,

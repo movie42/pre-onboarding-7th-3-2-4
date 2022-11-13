@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import { SERVER_BASE_URL } from "lib/constants";
 import type { AccountModel } from "model/interface";
 import type { NextApiRequest, NextApiResponse } from "next";
-import AccountsService from "service/AccountService";
+import AccountsService from "service/AccountsService";
 
 export default async function accountHandler(
   req: NextApiRequest,
@@ -18,6 +18,7 @@ export default async function accountHandler(
         Authorization: `Bearer ${accessToken}`
       }
     });
+
     const response = await account.getAccounts("/accounts");
 
     const accounts = response.data;

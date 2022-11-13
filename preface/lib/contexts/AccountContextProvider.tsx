@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useContext } from "react";
 import { IAccountsService } from "service/interface";
 import { CLIENT_BASE_URL } from "lib/constants";
-import AccountsService from "service/AccountService";
+import AccountsService from "service/AccountsService";
 
 interface IAccountContextProviderProps {
   children: ReactNode;
