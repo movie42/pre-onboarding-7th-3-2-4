@@ -16,7 +16,7 @@ const useLogin = () => {
       await authService.login("/api/login", { email, password }),
     {
       onSuccess: (data) => {
-        router.push("/contents");
+        router.push("/accounts");
         return data;
       },
       onError: (error) => {

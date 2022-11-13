@@ -19,6 +19,8 @@ export default async function loginHandler(
 
     const { accessToken } = response.data;
 
+    res.setHeader("Set-Cookie", `accessToken=${accessToken}; path=/;`);
+
     return res.status(200).json({ accessToken });
   } catch (error) {
     if (error instanceof AxiosError) {

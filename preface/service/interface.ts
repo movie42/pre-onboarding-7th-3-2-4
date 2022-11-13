@@ -1,5 +1,5 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { IUser } from "model/interface";
+import { AccountModel, IUser } from "model/interface";
 
 export interface ServerError {
   statusCode: number;
@@ -17,4 +17,12 @@ export interface IAuthService {
 export interface IUserVariable {
   email: string;
   password: string;
+}
+
+export interface IAccountsService {
+  getAccounts: (
+    endpoint: string
+  ) => Promise<
+    AxiosResponse<AccountModel[]> | AxiosError<ServerError> | undefined
+  >;
 }

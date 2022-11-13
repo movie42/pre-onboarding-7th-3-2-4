@@ -2,7 +2,7 @@ export interface IUser {
   accessToken: string;
 }
 
-export interface IAccount {
+export interface AccountModel {
   id: number;
   user_id: number;
   uuid: string;
