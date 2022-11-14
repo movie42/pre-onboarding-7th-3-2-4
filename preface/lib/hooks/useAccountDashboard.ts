@@ -1,13 +1,13 @@
 import {
   changeAccountStatusFromNumberToKorean,
   changeBrokerCodeToKorean,
-  convertUTCTimeToCustomString,
-  maskingAccountNumber
+  convertUTCTimeToCustomString
 } from "lib/utils";
 import { useEffect, useState } from "react";
 import useGetAccounts from "./useGetAccounts";
 import useGetUsers from "./useGetUsers";
 import type { AccountModel, UserModel } from "model/interface";
+import generateAccountWithHypen from "lib/utils/generateAccountNumberWithHyphen";
 
 export interface DashboardModel {
   id?: number;
@@ -18,8 +18,11 @@ export interface DashboardModel {
   name?: string;
   assets?: string;
   payments?: string;
+  profit_rate?: string;
+  is_profit: boolean | null;
   is_active?: string;
   created_at?: string;
+  updated_at?: string;
 }
 
 const useAccountDashboard = () => {
@@ -42,13 +45,28 @@ const useAccountDashboard = () => {
       id: account.id,
       user_id: users.find((user) => user?.id === account.user_id)?.name,
       broker_id: changeBrokerCodeToKorean(account?.broker_id),
-      number: maskingAccountNumber(account?.number),
+      number: generateAccountWithHypen(account.broker_id, account?.number),
       status: changeAccountStatusFromNumberToKorean(account?.status),
       name: account?.name,
-      assets: Number(account?.assets).toLocaleString("ko-KR"),
-      payments: Number(account?.payments).toLocaleString("ko-KR"),
+      assets: Number(account?.assets).toLocaleString("ko-KR", {
+        maximumFractionDigits: 0
+      }),
+      payments: Number(account?.payments).toLocaleString("ko-KR", {
+        maximumFractionDigits: 0
+      }),
+      profit_rate: (
+        (Number(account.assets) / Number(account.payments)) *
+        100
+      ).toFixed(2),
+      is_profit:
+        Number(account.assets) - Number(account.payments) > 0
+          ? true
+          : Number(account.assets) - Number(account.payments) === 0
+          ? null
+          : false,
       is_active: account?.is_active ? "활성화" : "비활성화",
-      created_at: convertUTCTimeToCustomString(account.created_at)
+      created_at: convertUTCTimeToCustomString(account.created_at),
+      updated_at: convertUTCTimeToCustomString(account.updated_at)
     }));
 
   useEffect(() => {

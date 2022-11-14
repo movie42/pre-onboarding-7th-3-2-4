@@ -7,7 +7,9 @@ const convertUTCTimeToCustomString = (UTC: Date) => {
     createDate.getDate()
   ];
 
-  return `${year}년 ${month}월 ${date}일`;
+  return `${year}년 ${month < 10 ? "0" + month : month}월 ${
+    date < 10 ? "0" + date : date
+  }일`;
 };
 
 export default convertUTCTimeToCustomString;
