@@ -2,7 +2,11 @@ import React from "react";
 import styled from "styled-components";
 
 const Footer = () => {
-  return <Container className="text-center">© December and Company</Container>;
+  return (
+    <Container className="flex items-center justify-center">
+      © December and Company
+    </Container>
+  );
 };
 
 export default Footer;

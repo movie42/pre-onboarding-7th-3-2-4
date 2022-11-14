@@ -22,15 +22,19 @@ time, mark, audio, video {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font-size: 10px;
+	
 	font: inherit;
 	vertical-align: baseline;
-	font-family: 'Spoqa Han Sans', 'Spoqa Han Sans JP', 'Sans-serif'; 
+	
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
 	display: block;
+}
+html {
+	font-family: 'Spoqa Han Sans Neo','Noto Sans KR', 'sans-serif'; 
+	font-size: 14px;
 }
 body {
 	line-height: 1;
