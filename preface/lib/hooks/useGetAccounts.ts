@@ -2,16 +2,24 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { AccountModel } from "model/interface";
 
-const useGetAccounts = () => {
+interface IUseGetAccounts {
+  page?: number;
+  limit?: number;
+  sort?: string;
+  order?: "desc" | "asc";
+}
+
+const useGetAccounts = ({ page, limit = 20, sort, order }: IUseGetAccounts) => {
   return useQuery(
     ["accounts"],
-    async () => await axios.get<{ accounts: AccountModel[] }>("/api/accounts"),
+    async () =>
+      await axios.get<{ accounts: AccountModel[]; totalPages: number }>(
+        `/api/accounts?_sort=${sort}&_order=${order}&_page=${page}&_limit=${limit}`
+      ),
     {
       select: ({ data }) => {
-        return data.accounts;
-      },
-      onSuccess: (data) => {
-        return data;
+        const totalPages = Math.ceil(data.totalPages);
+        return { accounts: data.accounts, totalPages };
       }
     }
   );
