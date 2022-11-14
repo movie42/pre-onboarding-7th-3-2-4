@@ -7,23 +7,23 @@ import { SERVER_BASE_URL } from "lib/constants";
 
 export default async function usersHandler(
   req: NextApiRequest,
-  res: NextApiResponse<{ users: UserModel[] }>
+  res: NextApiResponse<{ users: UserModel }>
 ) {
   try {
     const {
-      query: { q },
-      cookies: { accessToken }
+      cookies: { accessToken },
+      query: { id }
     } = req;
 
-    const account = new UserService(SERVER_BASE_URL, {
+    const userService = new UserService(SERVER_BASE_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }
     });
 
-    const response = await account.searchUser(Number(q));
+    const response = await userService.searchUser(id);
 
-    const users = response.data;
+    const [users] = response.data;
 
     return res.status(200).json({ users });
   } catch (error) {

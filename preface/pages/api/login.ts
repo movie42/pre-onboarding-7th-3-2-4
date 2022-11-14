@@ -19,7 +19,10 @@ export default async function loginHandler(
 
     const { accessToken } = response.data;
 
-    res.setHeader("Set-Cookie", `accessToken=${accessToken}; path=/;`);
+    res.setHeader(
+      "Set-Cookie",
+      `accessToken=${accessToken}; path=/;  Max-Age=360000; Secure; HttpOnly;`
+    );
 
     return res.status(200).json({ accessToken });
   } catch (error) {
