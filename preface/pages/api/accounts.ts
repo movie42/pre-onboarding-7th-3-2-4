@@ -15,7 +15,7 @@ export default async function accountHandler(
   try {
     const {
       cookies: { accessToken },
-      query: { _page, _limit, _sort, _order }
+      query: { searchString, _page, _limit, _sort, _order }
     } = req;
 
     const account = new AccountsService(SERVER_BASE_URL, {
@@ -25,7 +25,9 @@ export default async function accountHandler(
     });
 
     const response = await account.getAccounts(
-      `/accounts?_sort=${_sort}&_order=${_order}&_page=${_page}&_limit=${_limit}`
+      `/accounts?q=${
+        searchString ? searchString : ""
+      }&_sort=${_sort}&_order=${_order}&_page=${_page}&_limit=${_limit}`
     );
 
     const responseHeaders = response.headers as AxiosResponseHeaders;
