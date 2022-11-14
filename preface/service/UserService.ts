@@ -9,9 +9,8 @@ class UserService extends AxiosHTTPClient implements IUserService {
     super(baseURL, config);
   }
 
-  searchUser = async (id: number) => {
-    const response = await this.instance.get<UserModel[]>(`/users?q=${id}`);
-
+  searchUser = async (id?: string | string[]) => {
+    const response = await this.instance.get<UserModel[]>(`/users?id=${id}`);
     return response;
   };
 }

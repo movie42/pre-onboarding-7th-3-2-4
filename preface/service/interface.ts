@@ -29,7 +29,7 @@ export interface IAccountsService {
 
 export interface IUserService {
   searchUser: (
-    id: number
+    id?: string | string[]
   ) => Promise<
     AxiosResponse<UserModel[]> | AxiosError<ServerError> | undefined
   >;
