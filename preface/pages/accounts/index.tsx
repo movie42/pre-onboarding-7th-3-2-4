@@ -3,45 +3,44 @@ import { Layout } from "components/Layout";
 import React, { ReactElement } from "react";
 import type { NextPageWithLayout } from "pages/_app";
 import AccountsContextProvider from "lib/contexts/AccountContextProvider";
-import useGetAccounts from "lib/hooks/useGetAccounts";
+
 import styled from "styled-components";
-import {
-  changeAccountStatusFromNumberToKorean,
-  changeBrokerCodeToKorean,
-  convertUTCTimeToCustomString,
-  maskingAccountNumber
-} from "lib/utils";
+
+import useAccountDashboard from "lib/hooks/useAccountDashboard";
 
 const Accounts: NextPageWithLayout = () => {
-  const { data: accounts } = useGetAccounts();
+  const { newAccounts, totalPage } = useAccountDashboard();
 
   return (
-    <Container>
-      <div className="grid">
-        <span>고객명</span>
-        <span>브로커명</span>
-        <span>계좌번호</span>
-        <span>계좌상태</span>
-        <span>계좌명</span>
-        <span>평가금액</span>
-        <span>입금금액</span>
-        <span>계좌활성화여부</span>
-        <span>계좌개설일</span>
-      </div>
-      {accounts?.map((value) => (
-        <div className="grid" key={`${value.id} ${value.created_at}`}>
-          <span>{value?.user_id}</span>
-          <span>{changeBrokerCodeToKorean(value?.broker_id)}</span>
-          <span>{maskingAccountNumber(value?.number)}</span>
-          <span>{changeAccountStatusFromNumberToKorean(value?.status)}</span>
-          <span>{value?.name}</span>
-          <span>{Number(value?.assets).toLocaleString("ko-KR")}</span>
-          <span>{Number(value?.payments).toLocaleString("ko-KR")}</span>
-          <span>{value?.is_active ? "활성화" : "비활성화"}</span>
-          <span>{convertUTCTimeToCustomString(value.created_at)}</span>
+    <>
+      <div>{totalPage}</div>
+      <Container>
+        <div className="grid">
+          <span>고객명</span>
+          <span>브로커명</span>
+          <span>계좌번호</span>
+          <span>계좌상태</span>
+          <span>계좌명</span>
+          <span>평가금액</span>
+          <span>입금금액</span>
+          <span>계좌활성화여부</span>
+          <span>계좌개설일</span>
         </div>
-      ))}
-    </Container>
+        {newAccounts?.map((account) => (
+          <div className="grid" key={`${account.id} ${account.created_at}`}>
+            <span>{account?.user_id}</span>
+            <span>{account?.broker_id}</span>
+            <span>{account?.number}</span>
+            <span>{account?.status}</span>
+            <span>{account?.name}</span>
+            <span>{account?.assets}</span>
+            <span>{account?.payments}</span>
+            <span>{account?.is_active}</span>
+            <span>{account.created_at}</span>
+          </div>
+        ))}
+      </Container>
+    </>
   );
 };
 
