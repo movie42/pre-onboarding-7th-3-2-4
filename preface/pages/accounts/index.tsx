@@ -1,6 +1,6 @@
 import { Layout } from "components/Layout";
 
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import type { NextPageWithLayout } from "pages/_app";
 import AccountsContextProvider from "lib/contexts/AccountContextProvider";
 
@@ -8,13 +8,32 @@ import styled, { css } from "styled-components";
 
 import useAccountDashboard from "lib/hooks/useAccountDashboard";
 import { maskingAccountNumber } from "lib/utils";
+import { useRouter } from "next/router";
 
 const Accounts: NextPageWithLayout = () => {
-  const { newAccounts, totalPage } = useAccountDashboard();
+  const { push, query } = useRouter();
+  const { newAccounts, totalPage } = useAccountDashboard(query);
+  const pagination = Array(totalPage && +totalPage).fill((_, i) => i + 1);
+
+  const handlePagination = (index: number) => () => {
+    push(`/accounts?_page=${index}&_limit=20`);
+  };
+
+  useEffect(() => {
+    console.log(query);
+  }, [query]);
 
   return (
     <>
-      <div>{totalPage}</div>
+      <div>
+        <PagiNation>
+          {pagination?.map((_, index) => (
+            <li key={index} onClick={handlePagination(index)}>
+              {index + 1}
+            </li>
+          ))}
+        </PagiNation>
+      </div>
       <Container>
         <div className="grid header">
           <span className="center">고객명</span>
@@ -62,6 +81,23 @@ Accounts.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default Accounts;
+
+const PagiNation = styled.ul`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 5rem;
+  li {
+    cursor: pointer;
+    font-size: 1.4rem;
+    padding: 1rem;
+    color: white;
+    background-color: ${(props) => props.theme.colors.primary1};
+    &:hover {
+      background-color: ${(props) => props.theme.colors.primary3};
+    }
+  }
+`;
 
 const Container = styled.div`
   background-color: ${(props) => props.theme.colors.white1};

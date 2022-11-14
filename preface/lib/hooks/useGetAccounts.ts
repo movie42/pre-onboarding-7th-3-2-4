@@ -15,10 +15,10 @@ const useGetAccounts = ({
   limit = 20,
   sort,
   order,
-  searchString = ""
+  searchString
 }: IUseGetAccounts) => {
   return useQuery(
-    ["accounts"],
+    ["accounts", searchString, sort, order, page],
     async () =>
       await axios.get<{ accounts: AccountModel[]; totalPages: number }>(
         `/api/accounts?q=${searchString}&_sort=${sort}&_order=${order}&_page=${page}&_limit=${limit}`

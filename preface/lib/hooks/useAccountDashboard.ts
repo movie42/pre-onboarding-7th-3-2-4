@@ -8,6 +8,7 @@ import useGetAccounts from "./useGetAccounts";
 import useGetUsers from "./useGetUsers";
 import type { AccountModel, UserModel } from "model/interface";
 import generateAccountWithHypen from "lib/utils/generateAccountNumberWithHyphen";
+import { ParsedUrlQuery } from "querystring";
 
 export interface DashboardModel {
   id?: number;
@@ -25,11 +26,15 @@ export interface DashboardModel {
   updated_at?: string;
 }
 
-const useAccountDashboard = () => {
+const useAccountDashboard = (query: ParsedUrlQuery) => {
   const [newAccounts, setNewAccounts] = useState<DashboardModel[]>();
   const [totalPage, setTotalPage] = useState<number>();
-  const { data: accounts, isSuccess: isAccountSuccess } = useGetAccounts({
-    page: 0
+  const {
+    data: accounts,
+    isSuccess: isAccountSuccess,
+    refetch
+  } = useGetAccounts({
+    page: Number(query?._page)
   });
   const userId = accounts?.accounts.map((value) => value.user_id);
   const userIdSet = Array.from(new Set(userId));
@@ -68,6 +73,12 @@ const useAccountDashboard = () => {
       created_at: convertUTCTimeToCustomString(account.created_at),
       updated_at: convertUTCTimeToCustomString(account.updated_at)
     }));
+
+  useEffect(() => {
+    if (query._page) {
+      refetch();
+    }
+  }, [query._page]);
 
   useEffect(() => {
     if (isUsersSuccess && isAccountSuccess && users) {
