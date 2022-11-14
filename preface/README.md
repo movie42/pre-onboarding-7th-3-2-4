@@ -1,34 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+5. 계좌 목록
+   - 표기되어야 하는 정보
+     - [x] 고객명(user_name) : 고객ID 를 참조하여 실제 이름으로 보여져야 합니다.
+     - ~~고객명을 누를 경우 사용자 상세화면으로 이동합니다.~~
+     - [x] 브로커명(broker_name) : 예시) OO증권, `brokers.json` 를 참조하여 실제 이름으로 보여져야 합니다.
+     - [x] 계좌번호(number) : 앞 뒤 각각 두글자를 제외하고 나머지는 글자수에 맞게 `*` 글자로 마스킹 처리가 필요합니다.
+     - [x] 계좌상태(status) : 예시) 운용중, `accountStatus.json` 를 참조하여 실제 이름으로 보여져야 합니다.
+     - [x] 계좌명(name) : 계좌명입니다.
+     - [x] 평가금액(assets) : 예시) 123,123,123
+     - [x] 입금금액(payments) : 예시) 123,123,123
+     - [x] 계좌활성화여부(is_active) : 계좌 활성화 여부
+     - [x] 계좌개설일(created_at) :
+   - 구현되어야 하는 기능
+     - [ ] 목록에서는 브로커명, 계좌 활성화 여부, 계좌 상태를 필터링 할 수 있어야 합니다.
+     - [ ] 리스트 페이지에서는 검색이 가능해야 합니다.
+       - `json-server` 의 Full-text Search API 를 사용하여 구현합니다.
+       - 예시 : GET [http://localhost:3000/accounts?q=South](http://localhost:3000/accounts?q=South)
+     - [ ] 페이지네이션이 되어야 합니다.
+       - `json-server` 의 Paginate API 를 사용하여 구현합니다.
+       - 예시 : GET [http://localhost:3000/accounts?\_page=2&\_limit=20](http://localhost:3000/accounts?%5C%5C_page=2&%5C%5C_limit=20)
+6. 상세
+   - [ ] 각 사용자, 계좌의 상세 페이지는 획득 가능한 대부분의 정보를 표시해주시면 됩니다.
+7. 조건
+   - [ ] Sider 메뉴에서는 현재 보고 있는 화면에 해당하는 메뉴가 하이라이트 되어야 합니다.
+   - [x] 새로고침을 해도 로그인 상태가 유지되어야 하며, 상태에 따라 기존에 머무르던 화면이 그대로 보여야 합니다.
+   - [ ] 계좌 리스트에서 계좌번호를 누르면 계좌상세 화면으로 이동합니다.
+   - ~~계좌 리스트에서 사용자 이름을 누르면 사용자 상세로 이동합니다.~~
+   - ~~사용자 상세에서 사용자의 계좌목록이 보여야 합니다.~~
+   - 계좌 목록에서 각 계좌 상태별로 필터링이 가능해야 합니다.
+   - [ ] 수익률이 플러스인 계좌의 총자산 금액은 빨간색, 원금과 동일한 경우 검정색, 마이너스일 경우 파란색으로 보여줘야 합니다.
+   - [x] 계좌 목록에서 broker_id 에 해당하는 실제 브로커명 (OO투자증권) 이 보여야 합니다.
+8. 추가 구현 사항
+   - `brokerFormat.json` 의 형식에 맞춘 계좌번호가 표기 (예: 123-123-123123-10)
+   - 상황별 예외처리
 
-## Getting Started
+요구사항
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- React.js 기반이어야 합니다.
+  - Node.js LTS 환경
+- [antd](https://ant.design/) 또는 [tailwindcss](https://tailwindcss.com/) 등의 UI 라이브러리나 프레임워크 사용을 권장
+  - 사용하시는 라이브러리의 기본 디자인 시스템을 따르되, 필요시 확장하여 개발하시면 됩니다.
+- 별도의 API 서버 개발은 필요하지 않습니다.
+  - 과제와 함께 제공되는 json-server 를 사용하셔서 개발
+  - API 응답값은 항상 정상 응답인 경우를 가정하나, 서버 에러응답, 실패응답, 타임아웃 등의 예외처리에 따른 가산점이 있습니다.
+- 일반적인 사용자 PC (1280x1024 이상) 화면에서 문제없이 작동해야 합니다.
+- 필요한 조건이 있다면 추가하셔도 좋습니다.
+- 특정 패키지 등의 사용 조건은 없습니다.
+- 기본으로 주어진 환경의 패키지 버전보다 최신 버전을 사용하셔도 무방합니다.
+- 인증된 사용자만 CRUD(생성, 조회, 수정, 삭제) 가 가능해야 합니다.
+  - 별도의 회원가입 기능은 필요하지 않습니다.
+  - API 호출 예시 참고해서 임의 사용자 생성 후 개발
