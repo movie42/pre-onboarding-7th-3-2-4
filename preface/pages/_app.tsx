@@ -5,6 +5,8 @@ import { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ThemeProvider } from "styled-components";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { RecoilRoot } from "recoil";
 
 import GlobalStyle from "styles/GlobalStyle";
 import { theme } from "styles/theme";
@@ -26,7 +28,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <GlobalStyle />
-          {getLayout(<Component {...pageProps} />)}
+          <RecoilRoot>{getLayout(<Component {...pageProps} />)}</RecoilRoot>
+          <ReactQueryDevtools initialIsOpen={false} />
         </ThemeProvider>
       </QueryClientProvider>
     </>
