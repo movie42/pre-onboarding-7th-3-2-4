@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -8,58 +8,18 @@ import AccountsContextProvider from "lib/contexts/AccountContextProvider";
 import { Layout } from "components/Layout";
 import useAccountDashboard from "lib/hooks/useAccountDashboard";
 import { maskingAccountNumber } from "lib/utils";
+import useGeneratePagination from "lib/hooks/useGeneratePagination";
+import SearchPaginationTools from "components/Tools/SearchPaginationTools";
 
 const Accounts: NextPageWithLayout = () => {
   const toolsContainerRef = useRef<HTMLDivElement>(null);
   const stickyToolsContainer = useRef<HTMLDivElement>(null);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState<number[]>([]);
-  const { push, query } = useRouter();
+
+  const { query } = useRouter();
   const { newAccounts, totalPage } = useAccountDashboard(query);
-
-  const paginationMap = (totalPage: number, currentPage: number) => {
-    const array = Array(totalPage)
-      .fill()
-      .map((value, index) => index + 1);
-
-    if (currentPage === 1) {
-      return [...array.splice(currentPage - 1, 5), totalPage];
-    }
-
-    if (totalPage === currentPage) {
-      return array.splice(currentPage - 6);
-    }
-
-    if (totalPage - currentPage < 5) {
-      const value = 5 - (totalPage - currentPage) + 1;
-      return array.splice(currentPage - value);
-    }
-
-    return [...array.splice(currentPage - 2, 5), totalPage];
-  };
-
-  const handlePagination = (page: number) => () => {
-    push(`/accounts?_page=${page}&_limit=20`);
-    setCurrentPage(page);
-  };
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!search) return;
-    push(`/accounts?search=${search}`);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.currentTarget.value);
-  };
-
-  useEffect(() => {
-    if (totalPage && currentPage) {
-      const pageArray = paginationMap(Number(totalPage), Number(currentPage));
-      setPagination(pageArray);
-    }
-  }, [totalPage, currentPage]);
+  const { pagination, handlePagination } = useGeneratePagination(
+    Number(totalPage)
+  );
 
   useEffect(() => {
     const handleVisiblityToolBox = () => {
@@ -78,30 +38,16 @@ const Accounts: NextPageWithLayout = () => {
 
   return (
     <AccountDashboardContainer>
-      <ToolsContainer ref={toolsContainerRef}>
-        <Form onSubmit={handleSearch}>
-          <input onChange={handleChange} value={search} type="text" />
-        </Form>
-        <PagiNation>
-          {pagination?.map((value, index) => (
-            <li key={index} onClick={handlePagination(value)}>
-              {value}
-            </li>
-          ))}
-        </PagiNation>
-      </ToolsContainer>
-      <StickyToolsContainer ref={stickyToolsContainer}>
-        <Form onSubmit={handleSearch}>
-          <input onChange={handleChange} value={search} type="text" />
-        </Form>
-        <PagiNation>
-          {pagination?.map((value, index) => (
-            <li key={index} onClick={handlePagination(value)}>
-              {value}
-            </li>
-          ))}
-        </PagiNation>
-      </StickyToolsContainer>
+      <ToolsContainer
+        ref={toolsContainerRef}
+        pagination={pagination}
+        handlePagination={handlePagination}
+      />
+      <StickyToolsContainer
+        ref={stickyToolsContainer}
+        pagination={pagination}
+        handlePagination={handlePagination}
+      />
       <AccountListContainer>
         <div className="grid header">
           <span className="center">고객명</span>
@@ -156,37 +102,18 @@ const AccountDashboardContainer = styled.div`
   overflow-x: auto;
 `;
 
-const ToolsContainer = styled.div`
-  border-radius: 4rem;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: ${(props) => props.theme.colors.primary1};
-  height: 5rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
-`;
+const ToolsContainer = styled(SearchPaginationTools)``;
 
-const StickyToolsContainer = styled.div`
+const StickyToolsContainer = styled(SearchPaginationTools)`
   visibility: hidden;
   position: fixed;
   top: 1rem;
-  border-radius: 4rem;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #07162cce;
-  height: 5rem;
-  margin-bottom: 1rem;
-  padding: 1rem;
   opacity: 0;
 
   &.sticky {
     visibility: visible;
     opacity: 1;
-    transition: opacity 0.3s linear;
+    transition: opacity 0.4s linear;
     ul {
       li {
         background-color: unset;
@@ -194,32 +121,6 @@ const StickyToolsContainer = styled.div`
           background-color: ${(props) => props.theme.colors.primary3};
         }
       }
-    }
-  }
-`;
-
-const Form = styled.form`
-  input {
-    font-size: 1.4rem;
-    padding: 0.4rem 1.5rem;
-    border-radius: 2rem;
-  }
-`;
-
-const PagiNation = styled.ul`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  li {
-    cursor: pointer;
-    font-size: 1.4rem;
-    padding: 1rem;
-    color: white;
-    background-color: ${(props) => props.theme.colors.primary1};
-    border-radius: 0.5rem;
-    &:hover {
-      background-color: ${(props) => props.theme.colors.primary3};
     }
   }
 `;
