@@ -8,7 +8,7 @@ import AccountsContextProvider from "lib/contexts/AccountContextProvider";
 import { Layout } from "components/Layout";
 import useAccountDashboard from "lib/hooks/useAccountDashboard";
 import { maskingAccountNumber } from "lib/utils";
-import useGeneratePagination from "lib/hooks/useGeneratePagination";
+import useGenerateControlPagination from "lib/hooks/useGenerateControlPagination";
 import SearchPaginationTools from "components/Tools/SearchPaginationTools";
 
 const Accounts: NextPageWithLayout = () => {
@@ -17,9 +17,8 @@ const Accounts: NextPageWithLayout = () => {
   const { push, query } = useRouter();
   const [order, setOrder] = useState("asc");
   const { newAccounts, totalPage, isLoading } = useAccountDashboard(query);
-  const { pagination, handlePagination, currentPage } = useGeneratePagination(
-    Number(totalPage)
-  );
+  const { pagination, handlePagination, currentPage } =
+    useGenerateControlPagination(Number(totalPage));
 
   const handleFiltering = (filter: string) => () => {
     push(`/accounts?sort=${filter}&order=${order}&_page=1`);
