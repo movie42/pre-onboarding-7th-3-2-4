@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 
-const useGeneratePagination = (totalPage: number) => {
+const useGenerateControlPagination = (totalPage: number) => {
   const { query, push } = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,15 +31,19 @@ const useGeneratePagination = (totalPage: number) => {
 
   const handlePagination = (page: number) => () => {
     const makeQuery = (query: ParsedUrlQuery) => {
-      const queryList: string[] = [];
-      for (const key in query) {
-        if (key === "_page") {
-          queryList.push(`${key}=${page}`);
-          break;
+      if (query && Object.keys(query).length !== 0) {
+        const queryList: string[] = [];
+        for (const key in query) {
+          if (key === "_page") {
+            queryList.push(`${key}=${page}`);
+            break;
+          }
+          queryList.push(`${key}=${query[key]}`);
         }
-        queryList.push(`${key}=${query[key]}`);
+
+        return queryList.join("&");
       }
-      return queryList.join("&");
+      return `_page=${page}`;
     };
 
     const queryString = makeQuery(query);
@@ -65,4 +69,4 @@ const useGeneratePagination = (totalPage: number) => {
   };
 };
 
-export default useGeneratePagination;
+export default useGenerateControlPagination;
