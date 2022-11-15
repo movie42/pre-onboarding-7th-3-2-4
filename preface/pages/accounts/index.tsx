@@ -1,14 +1,13 @@
-import { Layout } from "components/Layout";
+import React, { ReactElement } from "react";
+import styled, { css } from "styled-components";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
-import React, { ReactElement, useEffect } from "react";
 import type { NextPageWithLayout } from "pages/_app";
 import AccountsContextProvider from "lib/contexts/AccountContextProvider";
-
-import styled, { css } from "styled-components";
-
+import { Layout } from "components/Layout";
 import useAccountDashboard from "lib/hooks/useAccountDashboard";
 import { maskingAccountNumber } from "lib/utils";
-import { useRouter } from "next/router";
 
 const Accounts: NextPageWithLayout = () => {
   const { push, query } = useRouter();
@@ -16,15 +15,11 @@ const Accounts: NextPageWithLayout = () => {
   const pagination = Array(totalPage && +totalPage).fill((_, i) => i + 1);
 
   const handlePagination = (index: number) => () => {
-    push(`/accounts?_page=${index}&_limit=20`);
+    push(`/accounts?_page=${index + 1}&_limit=20`);
   };
 
-  useEffect(() => {
-    console.log(query);
-  }, [query]);
-
   return (
-    <>
+    <AccountDashboardContainer>
       <div>
         <PagiNation>
           {pagination?.map((_, index) => (
@@ -47,46 +42,53 @@ const Accounts: NextPageWithLayout = () => {
           <span className="center">계좌개설일</span>
         </div>
         {newAccounts?.map((account) => (
-          <AccountItem
-            className="grid"
-            is_profit={account.is_profit}
-            key={`${account?.number}`}
-          >
-            <span className="center">{account?.user_id}</span>
-            <span className="center">{account?.broker_id}</span>
-            <span className="center">
-              {account.number && maskingAccountNumber(account?.number)}
-            </span>
-            <span className="center">{account?.status}</span>
-            <span className="left center ">{account?.name}</span>
-            <span className="right profit number">
-              {account.is_profit ? "+" : "-"} {account?.assets} 원
-            </span>
-            <span className="right number">{account?.payments} 원</span>
-            <span className="center">{account?.is_active}</span>
-            <span className="center">{account.created_at}</span>
+          <AccountItem is_profit={account.is_profit} key={`${account?.number}`}>
+            <Link
+              href={`/accounts/${account.number}?userId=${account?.user_id}`}
+              className="grid"
+            >
+              <span className="center">{account?.user_name}</span>
+              <span className="center">{account?.broker_id}</span>
+              <span className="center">
+                {account.number && maskingAccountNumber(account?.number)}
+              </span>
+              <span className="center">{account?.status}</span>
+              <span className="left center ">{account?.name}</span>
+              <span className="right profit number">
+                {account.is_profit ? "+" : "-"} {account?.assets} 원
+              </span>
+              <span className="right number">{account?.payments} 원</span>
+              <span className="center">{account?.is_active}</span>
+              <span className="center">{account.created_at}</span>
+            </Link>
           </AccountItem>
         ))}
       </Container>
-    </>
+    </AccountDashboardContainer>
   );
 };
 
 Accounts.getLayout = function getLayout(page: ReactElement) {
   return (
     <AccountsContextProvider>
-      <Layout>{page}</Layout>
+      <Layout pageTitle="계좌목록">{page}</Layout>
     </AccountsContextProvider>
   );
 };
 
 export default Accounts;
 
+const AccountDashboardContainer = styled.div`
+  width: 1280px;
+  overflow-x: auto;
+`;
+
 const PagiNation = styled.ul`
   display: flex;
   align-items: center;
   justify-content: center;
   height: 5rem;
+
   li {
     cursor: pointer;
     font-size: 1.4rem;
@@ -101,18 +103,18 @@ const PagiNation = styled.ul`
 
 const Container = styled.div`
   background-color: ${(props) => props.theme.colors.white1};
-  min-width: 1280px;
   span {
     display: inline-block;
     width: 100%;
     height: 100%;
     padding: 0.3rem;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   .grid {
     max-width: 2800px;
+    min-width: 1280px;
     display: grid;
-    grid-template-columns: 1.1fr 1.2fr 1fr 1.1fr 1.5fr repeat(4, 1.3fr);
+    grid-template-columns: repeat(5, 1.2fr) 2fr repeat(3, 1.3fr);
     grid-auto-rows: minmax(4rem, auto);
   }
   .grid.header {
@@ -155,7 +157,6 @@ const AccountItem = styled.div<{ is_profit: boolean | null | undefined }>`
       if (is_profit) {
         return css`
           color: #c20000;
-          background-color: #ffcdcd;
         `;
       } else if (is_profit === null) {
         return css`
@@ -165,7 +166,6 @@ const AccountItem = styled.div<{ is_profit: boolean | null | undefined }>`
       }
       return css`
         color: #0000aa;
-        background-color: #ccccff;
       `;
     }}
   }
