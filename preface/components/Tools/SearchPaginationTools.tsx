@@ -1,8 +1,9 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import React, { HTMLAttributes, useState } from "react";
 import { useRouter } from "next/router";
 
 interface ISearchPaginationTools {
+  currentPage: number;
   className?: HTMLAttributes<HTMLDivElement>["className"];
   pagination: number[];
   handlePagination: (page: number) => () => void;
@@ -11,7 +12,7 @@ interface ISearchPaginationTools {
 type Ref = HTMLDivElement;
 
 const SearchPaginationTools = React.forwardRef<Ref, ISearchPaginationTools>(
-  ({ pagination, handlePagination, className }, ref) => {
+  ({ pagination, handlePagination, className, currentPage }, ref) => {
     const { push } = useRouter();
     const [search, setSearch] = useState("");
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,13 +28,22 @@ const SearchPaginationTools = React.forwardRef<Ref, ISearchPaginationTools>(
     return (
       <ToolsContainer className={className} ref={ref}>
         <Form onSubmit={handleSearch}>
-          <input onChange={handleChange} value={search} type="text" />
+          <input
+            placeholder="고객명, 계좌명을 입력해주세요."
+            onChange={handleChange}
+            value={search}
+            type="text"
+          />
         </Form>
         <PagiNation>
           {pagination?.map((value, index) => (
-            <li key={index} onClick={handlePagination(value)}>
+            <Page
+              key={index}
+              isActive={currentPage === value}
+              onClick={handlePagination(value)}
+            >
               {value}
-            </li>
+            </Page>
           ))}
         </PagiNation>
       </ToolsContainer>
@@ -58,9 +68,11 @@ const ToolsContainer = styled.div`
 `;
 
 const Form = styled.form`
+  width: 30%;
   input {
-    font-size: 1.4rem;
-    padding: 0.4rem 1.5rem;
+    width: 100%;
+    font-size: 1.3rem;
+    padding: 0.6rem 1.5rem;
     border-radius: 2rem;
   }
 `;
@@ -69,16 +81,23 @@ const PagiNation = styled.ul`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
 
-  li {
-    cursor: pointer;
-    font-size: 1.4rem;
-    padding: 1rem;
-    color: white;
-    background-color: ${(props) => props.theme.colors.primary1};
-    border-radius: 0.5rem;
-    &:hover {
-      background-color: ${(props) => props.theme.colors.primary3};
+const Page = styled.li<{ isActive: boolean }>`
+  cursor: pointer;
+  font-size: 1.4rem;
+  padding: 1rem;
+  color: white;
+  background-color: ${(props) => props.theme.colors.primary1};
+  border-radius: 0.5rem;
+  ${({ isActive, theme }) => {
+    if (isActive) {
+      return css`
+        background-color: ${theme.colors.second1};
+      `;
     }
+  }}
+  &:hover {
+    background-color: ${(props) => props.theme.colors.primary3};
   }
 `;

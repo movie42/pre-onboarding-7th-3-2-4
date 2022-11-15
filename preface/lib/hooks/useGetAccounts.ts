@@ -7,7 +7,7 @@ interface IUseGetAccounts {
   limit?: number;
   sort?: string;
   searchString?: string;
-  order?: "desc" | "asc";
+  order?: string;
 }
 
 const useGetAccounts = ({
@@ -21,7 +21,7 @@ const useGetAccounts = ({
     ["accounts", searchString, sort, order, page],
     async () =>
       await axios.get<{ accounts: AccountModel[]; totalPages: number }>(
-        `/api/accounts?q=${searchString}&_sort=${sort}&_order=${order}&_page=${page}&_limit=${limit}`
+        `/api/accounts?searchString=${searchString}&_sort=${sort}&_order=${order}&_page=${page}&_limit=${limit}`
       ),
     {
       select: ({ data }) => {

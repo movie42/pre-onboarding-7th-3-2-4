@@ -1,15 +1,16 @@
 import { useRouter } from "next/router";
+import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 
 const useGeneratePagination = (totalPage: number) => {
-  const { push } = useRouter();
+  const { query, push } = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<number[]>([]);
 
   const paginationMap = (totalPage: number, currentPage: number) => {
     const array = Array(totalPage)
-      .fill()
+      .fill(undefined)
       .map((value, index) => index + 1);
 
     if (currentPage === 1) {
@@ -29,7 +30,21 @@ const useGeneratePagination = (totalPage: number) => {
   };
 
   const handlePagination = (page: number) => () => {
-    push(`/accounts?_page=${page}&_limit=20`);
+    const makeQuery = (query: ParsedUrlQuery) => {
+      const queryList: string[] = [];
+      for (const key in query) {
+        if (key === "_page") {
+          queryList.push(`${key}=${page}`);
+          break;
+        }
+        queryList.push(`${key}=${query[key]}`);
+      }
+      return queryList.join("&");
+    };
+
+    const queryString = makeQuery(query);
+
+    push(`/accounts?${queryString}`);
     setCurrentPage(page);
   };
 

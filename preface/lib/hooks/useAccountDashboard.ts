@@ -9,13 +9,18 @@ import useGetUsers from "./useGetUsers";
 import type { AccountModel, UserModel } from "model/interface";
 
 import { ParsedUrlQuery } from "querystring";
+import { TBrokersKey } from "lib/utils/changeBrokerCodeToKorean";
+import { TAccountStatusValue } from "lib/utils/changeAccountStatusFromNumberToKorean";
 
 export interface DashboardModel {
   id?: number;
+  uuid: string;
   user_name?: string;
   user_id?: number;
-  broker_id?: string;
-  status?: string;
+  broker_id?: TBrokersKey;
+  broker_name?: string;
+  status?: TAccountStatusValue;
+  status_kr?: string;
   number?: string;
   name?: string;
   assets?: string;
@@ -28,20 +33,28 @@ export interface DashboardModel {
 }
 
 const useAccountDashboard = (query: ParsedUrlQuery) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const [newAccounts, setNewAccounts] = useState<DashboardModel[]>();
   const [totalPage, setTotalPage] = useState<number>();
   const {
     data: accounts,
     isSuccess: isAccountSuccess,
+    isLoading: isAccountLoading,
     refetch
   } = useGetAccounts({
-    page: Number(query?._page)
+    page: Number(query?._page),
+    searchString: query?.search ? String(query?.search) : "",
+    sort: query?.sort ? String(query?.sort) : "",
+    order: query?.order ? String(query?.order) : "asc"
   });
 
   const userId = accounts?.accounts.map((value) => value.user_id);
   const userIdSet = Array.from(new Set(userId));
   const result = useGetUsers(userIdSet);
   const isUsersSuccess = result.every((value) => value.isSuccess);
+  const isUserLoading = result.some((value) => value.isLoading);
   const users = isUsersSuccess && result.map((value) => value.data);
 
   const changeNewAccount = (
@@ -50,11 +63,14 @@ const useAccountDashboard = (query: ParsedUrlQuery) => {
   ): DashboardModel[] | undefined =>
     accounts.map((account) => ({
       id: account.id,
+      uuid: account.uuid,
       user_id: account.user_id,
       user_name: users.find((user) => user?.id === account.user_id)?.name,
-      broker_id: changeBrokerCodeToKorean(account?.broker_id),
+      broker_id: account?.broker_id,
+      broker_name: changeBrokerCodeToKorean(account?.broker_id),
       number: account?.number,
-      status: changeAccountStatusFromNumberToKorean(account?.status),
+      status: account?.status,
+      status_kr: changeAccountStatusFromNumberToKorean(account?.status),
       name: account?.name,
       assets: Number(account?.assets).toLocaleString("ko-KR", {
         maximumFractionDigits: 0
@@ -78,10 +94,26 @@ const useAccountDashboard = (query: ParsedUrlQuery) => {
     }));
 
   useEffect(() => {
-    if (query._page) {
-      refetch();
+    const success = [isAccountSuccess, isUsersSuccess];
+    if (success.every((value) => value)) {
+      setIsSuccess(true);
+      return;
     }
-  }, [query._page]);
+    setIsSuccess(false);
+  }, [isAccountSuccess, isUsersSuccess]);
+
+  useEffect(() => {
+    const loading = [isAccountLoading, isUserLoading];
+    if (loading.some((value) => value)) {
+      setIsLoading(true);
+      return;
+    }
+    setIsLoading(false);
+  }, [isAccountLoading, isUserLoading]);
+
+  useEffect(() => {
+    refetch();
+  }, [query.sort, query.order, query._page]);
 
   useEffect(() => {
     if (isUsersSuccess && isAccountSuccess && users) {
@@ -89,9 +121,9 @@ const useAccountDashboard = (query: ParsedUrlQuery) => {
       setNewAccounts(newAccount);
       setTotalPage(accounts.totalPages);
     }
-  }, [isUsersSuccess, isAccountSuccess, query._page]);
+  }, [isUsersSuccess, isAccountSuccess, query._page, accounts?.accounts]);
 
-  return { newAccounts, totalPage };
+  return { newAccounts, totalPage, isSuccess, isLoading };
 };
 
 export default useAccountDashboard;

@@ -13,6 +13,7 @@ import generateAccountWithHypen from "lib/utils/generateAccountNumberWithHyphen"
 
 export interface DashboardModel {
   id?: number;
+  uuid?: string;
   user_name?: string;
   user_id?: number;
   broker_id?: string;
@@ -68,6 +69,7 @@ const useGetAccountDetail = () => {
     user?: UserModel
   ): DashboardModel => ({
     id: account?.id,
+    uuid: account?.uuid,
     user_id: user?.id,
     user_name: user?.name,
     broker_id:

@@ -12,5 +12,3 @@ const maskingAccountNumber = (account: string) => {
 };
 
 export default maskingAccountNumber;
-
-// ["5", "7", "1", "1", "4", "4", "6", "3", "5", "4", "9", "1"];
