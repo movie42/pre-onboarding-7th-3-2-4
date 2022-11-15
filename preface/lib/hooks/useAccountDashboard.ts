@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 import useGetAccounts from "./useGetAccounts";
 import useGetUsers from "./useGetUsers";
 import type { AccountModel, UserModel } from "model/interface";
-import generateAccountWithHypen from "lib/utils/generateAccountNumberWithHyphen";
+
 import { ParsedUrlQuery } from "querystring";
 
 export interface DashboardModel {
   id?: number;
-  user_id?: string;
+  user_name?: string;
+  user_id?: number;
   broker_id?: string;
   status?: string;
   number?: string;
@@ -36,6 +37,7 @@ const useAccountDashboard = (query: ParsedUrlQuery) => {
   } = useGetAccounts({
     page: Number(query?._page)
   });
+
   const userId = accounts?.accounts.map((value) => value.user_id);
   const userIdSet = Array.from(new Set(userId));
   const result = useGetUsers(userIdSet);
@@ -48,9 +50,10 @@ const useAccountDashboard = (query: ParsedUrlQuery) => {
   ): DashboardModel[] | undefined =>
     accounts.map((account) => ({
       id: account.id,
-      user_id: users.find((user) => user?.id === account.user_id)?.name,
+      user_id: account.user_id,
+      user_name: users.find((user) => user?.id === account.user_id)?.name,
       broker_id: changeBrokerCodeToKorean(account?.broker_id),
-      number: generateAccountWithHypen(account.broker_id, account?.number),
+      number: account?.number,
       status: changeAccountStatusFromNumberToKorean(account?.status),
       name: account?.name,
       assets: Number(account?.assets).toLocaleString("ko-KR", {
@@ -86,7 +89,7 @@ const useAccountDashboard = (query: ParsedUrlQuery) => {
       setNewAccounts(newAccount);
       setTotalPage(accounts.totalPages);
     }
-  }, [isUsersSuccess]);
+  }, [isUsersSuccess, isAccountSuccess, query._page]);
 
   return { newAccounts, totalPage };
 };
