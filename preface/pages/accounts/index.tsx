@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -14,12 +14,17 @@ import SearchPaginationTools from "components/Tools/SearchPaginationTools";
 const Accounts: NextPageWithLayout = () => {
   const toolsContainerRef = useRef<HTMLDivElement>(null);
   const stickyToolsContainer = useRef<HTMLDivElement>(null);
-
-  const { query } = useRouter();
-  const { newAccounts, totalPage } = useAccountDashboard(query);
-  const { pagination, handlePagination } = useGeneratePagination(
+  const { push, query } = useRouter();
+  const [order, setOrder] = useState("asc");
+  const { newAccounts, totalPage, isLoading } = useAccountDashboard(query);
+  const { pagination, handlePagination, currentPage } = useGeneratePagination(
     Number(totalPage)
   );
+
+  const handleFiltering = (filter: string) => () => {
+    push(`/accounts?sort=${filter}&order=${order}&_page=1`);
+    setOrder((pre) => (pre === "asc" ? "desc" : "asc"));
+  };
 
   useEffect(() => {
     const handleVisiblityToolBox = () => {
@@ -36,14 +41,20 @@ const Accounts: NextPageWithLayout = () => {
     return () => window.removeEventListener("scroll", handleVisiblityToolBox);
   }, [toolsContainerRef, stickyToolsContainer]);
 
+  if (isLoading) {
+    return <div>계좌 목록을 불러오고 있습니다.</div>;
+  }
+
   return (
     <AccountDashboardContainer>
       <ToolsContainer
+        currentPage={currentPage}
         ref={toolsContainerRef}
         pagination={pagination}
         handlePagination={handlePagination}
       />
       <StickyToolsContainer
+        currentPage={currentPage}
         ref={stickyToolsContainer}
         pagination={pagination}
         handlePagination={handlePagination}
@@ -51,27 +62,48 @@ const Accounts: NextPageWithLayout = () => {
       <AccountListContainer>
         <div className="grid header">
           <span className="center">고객명</span>
-          <span className="center">브로커명</span>
+          <span
+            onClick={handleFiltering("broker_id")}
+            className="center cursor-pointer hover:bg-slate-400"
+          >
+            브로커명
+          </span>
           <span className="center">계좌번호</span>
-          <span className="center">계좌상태</span>
+          <span
+            onClick={handleFiltering("status")}
+            className="center cursor-pointer hover:bg-slate-400"
+          >
+            계좌상태
+          </span>
           <span className="center">계좌명</span>
           <span className="center">평가금액</span>
           <span className="center">입금금액</span>
-          <span className="center">계좌활성화여부</span>
+          <span
+            onClick={handleFiltering("is_active")}
+            className="center cursor-pointer hover:bg-slate-400"
+          >
+            계좌활성화여부
+          </span>
           <span className="center">계좌개설일</span>
         </div>
         {newAccounts?.map((account) => (
-          <AccountItem is_profit={account.is_profit} key={`${account?.number}`}>
+          <AccountItem is_profit={account.is_profit} key={`${account?.uuid}`}>
             <Link
-              href={`/accounts/${account.number}?userId=${account?.user_id}`}
+              href={`/accounts/${account?.uuid}?userId=${account?.user_id}`}
               className="grid"
             >
-              <span className="center">{account?.user_name}</span>
-              <span className="center">{account?.broker_id}</span>
+              <span className="center" data-userid={account.user_id}>
+                {account?.user_name}
+              </span>
+              <span className="center" data-brokerid={account.broker_id}>
+                {account?.broker_name}
+              </span>
               <span className="center">
                 {account.number && maskingAccountNumber(account?.number)}
               </span>
-              <span className="center">{account?.status}</span>
+              <span className="center" data-status={account.status}>
+                {account?.status_kr}
+              </span>
               <span className="left center ">{account?.name}</span>
               <span className="right profit number">
                 {account.is_profit ? "+" : "-"} {account?.assets} 원
@@ -109,6 +141,7 @@ const StickyToolsContainer = styled(SearchPaginationTools)`
   position: fixed;
   top: 1rem;
   opacity: 0;
+  width: 50%;
 
   &.sticky {
     visibility: visible;
@@ -116,7 +149,6 @@ const StickyToolsContainer = styled(SearchPaginationTools)`
     transition: opacity 0.4s linear;
     ul {
       li {
-        background-color: unset;
         &:hover {
           background-color: ${(props) => props.theme.colors.primary3};
         }
