@@ -16,6 +16,17 @@ class AccountsService extends AxiosHTTPClient implements IAccountsService {
 
     return response;
   };
+
+  getAccountDetail = async (
+    queryString?: string | string[],
+    config?: AxiosRequestConfig
+  ) => {
+    const response = await this.instance.get<AccountModel[]>(
+      `/accounts?q=${queryString}`,
+      { ...config }
+    );
+    return response;
+  };
 }
 
 export default AccountsService;

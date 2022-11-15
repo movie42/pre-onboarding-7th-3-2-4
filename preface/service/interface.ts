@@ -1,4 +1,5 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import { Server } from "http";
 import { AccountModel, IToken, UserModel } from "model/interface";
 
 export interface ServerError {
@@ -21,10 +22,16 @@ export interface IUserVariable {
 
 export interface IAccountsService {
   getAccounts: (
-    endpoint: string
+    endpoint: string,
+    config?: AxiosRequestConfig
   ) => Promise<
     AxiosResponse<AccountModel[]> | AxiosError<ServerError> | undefined
   >;
+
+  getAccountDetail: (
+    queryString?: string | string[],
+    config?: AxiosRequestConfig
+  ) => Promise<AxiosResponse<AccountModel[]> | AxiosError<Server> | undefined>;
 }
 
 export interface IUserService {
