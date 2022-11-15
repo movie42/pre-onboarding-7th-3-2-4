@@ -16,7 +16,7 @@ const Accounts: NextPageWithLayout = () => {
   const stickyToolsContainer = useRef<HTMLDivElement>(null);
   const { push, query } = useRouter();
   const [order, setOrder] = useState("asc");
-  const { newAccounts, totalPage, isLoading } = useAccountDashboard(query);
+  const { newAccounts, totalPage } = useAccountDashboard(query);
   const { pagination, handlePagination, currentPage } =
     useGenerateControlPagination(Number(totalPage));
 
@@ -39,10 +39,6 @@ const Accounts: NextPageWithLayout = () => {
     window.addEventListener("scroll", handleVisiblityToolBox);
     return () => window.removeEventListener("scroll", handleVisiblityToolBox);
   }, [toolsContainerRef, stickyToolsContainer]);
-
-  if (isLoading) {
-    return <div>계좌 목록을 불러오고 있습니다.</div>;
-  }
 
   return (
     <AccountDashboardContainer>
