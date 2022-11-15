@@ -6,15 +6,16 @@ import Main from "./Main";
 import SideBar from "./SideBar";
 
 interface ILayout {
+  pageTitle: string;
   children: ReactNode;
 }
 
-const Layout = ({ children }: ILayout) => {
+const Layout = ({ pageTitle, children }: ILayout) => {
   return (
     <Container className="grid grid-cols-layout h-vh100">
       <SideBar />
       <MainContentContainer className="grid grid-rows-basicContent">
-        <Header />
+        <Header pageTitle={pageTitle} />
         <Main>{children}</Main>
         <Footer />
       </MainContentContainer>

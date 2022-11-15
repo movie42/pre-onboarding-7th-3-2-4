@@ -11,4 +11,7 @@ const Main = ({ children }: IMainProps) => {
 
 export default Main;
 
-const Container = styled.main``;
+const Container = styled.main`
+  width: 100%;
+  overflow-x: auto;
+`;
