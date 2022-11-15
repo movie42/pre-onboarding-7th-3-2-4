@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -10,26 +10,99 @@ import useAccountDashboard from "lib/hooks/useAccountDashboard";
 import { maskingAccountNumber } from "lib/utils";
 
 const Accounts: NextPageWithLayout = () => {
+  const toolsContainerRef = useRef<HTMLDivElement>(null);
+  const stickyToolsContainer = useRef<HTMLDivElement>(null);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<number[]>([]);
   const { push, query } = useRouter();
   const { newAccounts, totalPage } = useAccountDashboard(query);
-  const pagination = Array(totalPage && +totalPage).fill((_, i) => i + 1);
 
-  const handlePagination = (index: number) => () => {
-    push(`/accounts?_page=${index + 1}&_limit=20`);
+  const paginationMap = (totalPage: number, currentPage: number) => {
+    const array = Array(totalPage)
+      .fill()
+      .map((value, index) => index + 1);
+
+    if (currentPage === 1) {
+      return [...array.splice(currentPage - 1, 5), totalPage];
+    }
+
+    if (totalPage === currentPage) {
+      return array.splice(currentPage - 6);
+    }
+
+    if (totalPage - currentPage < 5) {
+      const value = 5 - (totalPage - currentPage) + 1;
+      return array.splice(currentPage - value);
+    }
+
+    return [...array.splice(currentPage - 2, 5), totalPage];
   };
+
+  const handlePagination = (page: number) => () => {
+    push(`/accounts?_page=${page}&_limit=20`);
+    setCurrentPage(page);
+  };
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!search) return;
+    push(`/accounts?search=${search}`);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.currentTarget.value);
+  };
+
+  useEffect(() => {
+    if (totalPage && currentPage) {
+      const pageArray = paginationMap(Number(totalPage), Number(currentPage));
+      setPagination(pageArray);
+    }
+  }, [totalPage, currentPage]);
+
+  useEffect(() => {
+    const handleVisiblityToolBox = () => {
+      if (toolsContainerRef.current) {
+        const value = toolsContainerRef.current?.offsetTop;
+        if (window.scrollY >= value) {
+          stickyToolsContainer.current?.classList.add("sticky");
+        } else {
+          stickyToolsContainer.current?.classList.remove("sticky");
+        }
+      }
+    };
+    window.addEventListener("scroll", handleVisiblityToolBox);
+    return () => window.removeEventListener("scroll", handleVisiblityToolBox);
+  }, [toolsContainerRef, stickyToolsContainer]);
 
   return (
     <AccountDashboardContainer>
-      <div>
+      <ToolsContainer ref={toolsContainerRef}>
+        <Form onSubmit={handleSearch}>
+          <input onChange={handleChange} value={search} type="text" />
+        </Form>
         <PagiNation>
-          {pagination?.map((_, index) => (
-            <li key={index} onClick={handlePagination(index)}>
-              {index + 1}
+          {pagination?.map((value, index) => (
+            <li key={index} onClick={handlePagination(value)}>
+              {value}
             </li>
           ))}
         </PagiNation>
-      </div>
-      <Container>
+      </ToolsContainer>
+      <StickyToolsContainer ref={stickyToolsContainer}>
+        <Form onSubmit={handleSearch}>
+          <input onChange={handleChange} value={search} type="text" />
+        </Form>
+        <PagiNation>
+          {pagination?.map((value, index) => (
+            <li key={index} onClick={handlePagination(value)}>
+              {value}
+            </li>
+          ))}
+        </PagiNation>
+      </StickyToolsContainer>
+      <AccountListContainer>
         <div className="grid header">
           <span className="center">고객명</span>
           <span className="center">브로커명</span>
@@ -63,7 +136,7 @@ const Accounts: NextPageWithLayout = () => {
             </Link>
           </AccountItem>
         ))}
-      </Container>
+      </AccountListContainer>
     </AccountDashboardContainer>
   );
 };
@@ -79,15 +152,64 @@ Accounts.getLayout = function getLayout(page: ReactElement) {
 export default Accounts;
 
 const AccountDashboardContainer = styled.div`
-  width: 1280px;
+  min-width: 1280px;
   overflow-x: auto;
+`;
+
+const ToolsContainer = styled.div`
+  border-radius: 4rem;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: ${(props) => props.theme.colors.primary1};
+  height: 5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+`;
+
+const StickyToolsContainer = styled.div`
+  visibility: hidden;
+  position: fixed;
+  top: 1rem;
+  border-radius: 4rem;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #07162cce;
+  height: 5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  opacity: 0;
+
+  &.sticky {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s linear;
+    ul {
+      li {
+        background-color: unset;
+        &:hover {
+          background-color: ${(props) => props.theme.colors.primary3};
+        }
+      }
+    }
+  }
+`;
+
+const Form = styled.form`
+  input {
+    font-size: 1.4rem;
+    padding: 0.4rem 1.5rem;
+    border-radius: 2rem;
+  }
 `;
 
 const PagiNation = styled.ul`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 5rem;
 
   li {
     cursor: pointer;
@@ -95,13 +217,14 @@ const PagiNation = styled.ul`
     padding: 1rem;
     color: white;
     background-color: ${(props) => props.theme.colors.primary1};
+    border-radius: 0.5rem;
     &:hover {
       background-color: ${(props) => props.theme.colors.primary3};
     }
   }
 `;
 
-const Container = styled.div`
+const AccountListContainer = styled.div`
   background-color: ${(props) => props.theme.colors.white1};
   span {
     display: inline-block;
@@ -168,5 +291,9 @@ const AccountItem = styled.div<{ is_profit: boolean | null | undefined }>`
         color: #0000aa;
       `;
     }}
+  }
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.gray4};
   }
 `;

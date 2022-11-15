@@ -1,11 +1,24 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import ImageContainer from "components/Image/ImageContainer";
 import logo from "public/images/logo.png";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const SideBar = () => {
+  const { route } = useRouter();
+
+  const isActiveLink = (path: string) => {
+    const match = route.match(`${path}`);
+
+    if (match !== null) {
+      return true;
+    }
+
+    return false;
+  };
+
   return (
     <Container className="bg-primary2 text-white grid grid-rows-sideContent">
       <div className="flex items-center justify-center">
@@ -19,10 +32,10 @@ const SideBar = () => {
       <div>
         <Nav>
           <ul>
-            <Item>
+            <Item isActive={isActiveLink("/accounts")}>
               <LinkButton href="/accounts">계좌목록</LinkButton>
             </Item>
-            <Item>
+            <Item isActive={isActiveLink("/logout")}>
               <LinkButton href={"/logout"}>로그아웃</LinkButton>
             </Item>
           </ul>
@@ -46,9 +59,20 @@ const LinkButton = styled(Link)``;
 
 const Nav = styled.nav``;
 
-const Item = styled.li`
-  background-color: ${(props) => props.theme.colors.primary3};
+const Item = styled.li<{ isActive: boolean }>`
+  ${({ isActive }) => {
+    if (isActive) {
+      return css`
+        font-weight: 700;
+        background-color: ${(props) => props.theme.colors.primary3};
+      `;
+    }
+    return css`
+      font-weight: 700;
+      background-color: ${(props) => props.theme.colors.primary2};
+    `;
+  }}
+
   padding: 2rem 1.7rem;
   font-size: 1.1rem;
-  font-weight: bolder;
 `;

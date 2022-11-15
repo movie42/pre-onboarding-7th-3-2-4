@@ -51,13 +51,13 @@ const AccountDetail = () => {
             <div className="small-title">계좌 이름</div> <strong>{name}</strong>
           </div>
           <div>
-            <div className="small-title">입금액</div>{" "}
+            <div className="small-title">입금액</div>
             <strong>{payments}</strong> 원
           </div>
         </div>
         <div className="account-detail-info">
           <div>
-            <div className="small-title">계좌 상태</div>{" "}
+            <div className="small-title">계좌 상태</div>
             <strong>{status}</strong>
           </div>
           <div>
