@@ -56,6 +56,7 @@ const useGetAccountDetail = () => {
           accountData,
           userData
         );
+
         setAccountDetail(newData);
       }
     }

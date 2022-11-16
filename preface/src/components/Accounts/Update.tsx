@@ -1,7 +1,4 @@
-import {
-  TAccountStatusKey,
-  TAccountStatusValue
-} from "@/lib/utils/changeAccountStatusFromNumberToKorean";
+import { TAccountStatusKey } from "@/lib/utils/changeAccountStatusFromNumberToKorean";
 import generateAccountWithHypen from "@/lib/utils/generateAccountNumberWithHyphen";
 import { DashboardModel } from "@/model/interface";
 import React, { useState } from "react";
@@ -39,7 +36,7 @@ const Update = ({ newAccountDetail, setIsEdit }: IAccountUpdateProps) => {
   const [isActive, setIsActive] = useState(is_active);
 
   const handleEditMutate = () => {
-    console.log("hi");
+    // console.log("hi")
   };
 
   return (
