@@ -3,6 +3,7 @@ import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 
 const useGenerateControlPagination = (totalPage: number) => {
+  console.log(totalPage);
   const { query, push } = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);

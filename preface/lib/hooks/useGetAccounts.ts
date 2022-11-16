@@ -20,13 +20,13 @@ const useGetAccounts = ({
   return useQuery(
     ["accounts", searchString, sort, order, page],
     async () =>
-      await axios.get<{ accounts: AccountModel[]; totalPages: number }>(
+      await axios.get<{ accounts: AccountModel[]; totalItems: number }>(
         `/api/accounts?searchString=${searchString}&_sort=${sort}&_order=${order}&_page=${page}&_limit=${limit}`
       ),
     {
       select: ({ data }) => {
-        const totalPages = Math.ceil(data.totalPages);
-        return { accounts: data.accounts, totalPages };
+        const totalItems = Math.ceil(data.totalItems);
+        return { accounts: data.accounts, totalItems };
       }
     }
   );

@@ -11,6 +11,8 @@ import type { AccountModel, UserModel } from "model/interface";
 import { ParsedUrlQuery } from "querystring";
 import { TBrokersKey } from "lib/utils/changeBrokerCodeToKorean";
 import { TAccountStatusValue } from "lib/utils/changeAccountStatusFromNumberToKorean";
+import { useSetRecoilState } from "recoil";
+import { totalItemsAtom } from "lib/atoms/totalItems";
 
 export interface DashboardModel {
   id?: number;
@@ -33,6 +35,7 @@ export interface DashboardModel {
 }
 
 const useAccountDashboard = (query: ParsedUrlQuery) => {
+  const setTotalItems = useSetRecoilState(totalItemsAtom);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -119,7 +122,10 @@ const useAccountDashboard = (query: ParsedUrlQuery) => {
     if (isUsersSuccess && isAccountSuccess && users) {
       const newAccount = changeNewAccount(accounts.accounts, users);
       setNewAccounts(newAccount);
-      setTotalPage(accounts.totalPages);
+      console.log(accounts.totalItems);
+      setTotalItems(Number(accounts.totalItems));
+      const totalPage = Math.ceil(Number(accounts.totalItems) / 20);
+      setTotalPage(totalPage);
     }
   }, [isUsersSuccess, isAccountSuccess, query._page, accounts?.accounts]);
 

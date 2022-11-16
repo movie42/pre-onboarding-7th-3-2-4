@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
 import React, { HTMLAttributes, useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface ISearchPaginationTools {
   currentPage: number;
@@ -35,6 +36,9 @@ const SearchPaginationTools = React.forwardRef<Ref, ISearchPaginationTools>(
             type="text"
           />
         </Form>
+        <Link className="bg-white" href="/accounts/create">
+          새로운 계좌 만들기
+        </Link>
         <PagiNation>
           {pagination?.map((value, index) => (
             <Page

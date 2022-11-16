@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponseHeaders } from "axios";
+import axios, { AxiosError, AxiosResponseHeaders } from "axios";
 
 import { SERVER_BASE_URL } from "lib/constants";
 import { COOKIE_KEY } from "lib/constants/constants";
@@ -11,15 +11,11 @@ import CookieService from "service/CookieService";
 export default async function accountHandler(
   req: NextApiRequest,
   res: NextApiResponse<{
-    accounts: AccountModel[];
-    totalItems: number;
+    ok: boolean;
   }>
 ) {
   try {
-    const {
-      query: { searchString, _page, _limit, _sort, _order }
-    } = req;
-
+    console.log(req.body);
     const { accessToken } = CookieService.getCookies(COOKIE_KEY, { req, res });
 
     const account = new AccountsService(SERVER_BASE_URL, {
@@ -28,18 +24,14 @@ export default async function accountHandler(
       }
     });
 
-    const response = await account.getAccounts(
-      `/accounts?q=${
-        searchString ? searchString : ""
-      }&_sort=${_sort}&_order=${_order}&_page=${_page}&_limit=${_limit}`
-    );
+    // const response = await axios.post("/accounts",);
 
-    const responseHeaders = response.headers as AxiosResponseHeaders;
+    // const responseHeaders = response.headers as AxiosResponseHeaders;
 
-    const accounts = response.data;
-    const totalItems = Number(responseHeaders.get("x-total-count"));
+    // const accounts = response.data;
+    // const totalItems = Number(responseHeaders.get("x-total-count"));
 
-    return res.status(200).json({ accounts, totalItems });
+    return res.status(200).json({ ok: true });
   } catch (error) {
     if (error instanceof AxiosError) {
       return error;
