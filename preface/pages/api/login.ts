@@ -1,8 +1,11 @@
 import { AxiosError } from "axios";
+
 import { SERVER_BASE_URL } from "lib/constants";
+import { COOKIE_KEY } from "lib/constants/constants";
 import { IToken } from "model/interface";
 import type { NextApiRequest, NextApiResponse } from "next";
 import AuthService from "service/AuthService";
+import CookieService from "service/CookieService";
 
 const authService = new AuthService(SERVER_BASE_URL);
 
@@ -17,17 +20,20 @@ export default async function loginHandler(
 
     const response = await authService.login("/login", { email, password });
 
-    const { accessToken } = response.data;
+    const { accessToken, user } = response.data;
 
-    res.setHeader(
-      "Set-Cookie",
-      `accessToken=${accessToken}; path=/;  Max-Age=360000; Secure; HttpOnly;`
-    );
+    const cookieObj = { accessToken, user };
 
-    return res.status(200).json({ accessToken });
+    CookieService.setCookie(COOKIE_KEY, JSON.stringify(cookieObj), {
+      req,
+      res,
+      maxAge: 3600
+    });
+
+    return res.status(200).json({ isLogin: true });
   } catch (error) {
     if (error instanceof AxiosError) {
-      return error;
+      return res.status(400).json({ isLogin: false, error });
     }
   }
 }

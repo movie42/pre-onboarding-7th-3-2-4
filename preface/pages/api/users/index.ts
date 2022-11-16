@@ -4,6 +4,8 @@ import type { UserModel } from "model/interface";
 
 import UserService from "service/UserService";
 import { SERVER_BASE_URL } from "lib/constants";
+import CookieService from "service/CookieService";
+import { COOKIE_KEY } from "lib/constants/constants";
 
 export default async function usersHandler(
   req: NextApiRequest,
@@ -11,9 +13,10 @@ export default async function usersHandler(
 ) {
   try {
     const {
-      cookies: { accessToken },
       query: { id }
     } = req;
+
+    const { accessToken } = CookieService.getCookies(COOKIE_KEY, { req, res });
 
     const userService = new UserService(SERVER_BASE_URL, {
       headers: {
