@@ -1,8 +1,11 @@
+import { AxiosError } from "axios";
 import { TAccountStatusValue } from "lib/utils/changeAccountStatusFromNumberToKorean";
 import { TBrokersKey } from "lib/utils/changeBrokerCodeToKorean";
+import { ServerError } from "service/interface";
 
 export interface IToken {
-  accessToken: string;
+  isLogin: boolean;
+  error?: AxiosError<ServerError>;
 }
 
 export interface AccountModel {
