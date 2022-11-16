@@ -47,12 +47,17 @@ const useGetAccountDetail = () => {
   const isSuccess = result.every((value) => value.isSuccess);
 
   useEffect(() => {
+    const [account, user] = result;
     if (isSuccess) {
-      const [account, user] = result;
       const accountData = account.data;
       const userData = user.data;
-      const [newData] = changeNewAccountDataForDashBoard(accountData, userData);
-      setAccountDetail(newData);
+      if (accountData && userData) {
+        const [newData] = changeNewAccountDataForDashBoard(
+          accountData,
+          userData
+        );
+        setAccountDetail(newData);
+      }
     }
   }, [isSuccess]);
 

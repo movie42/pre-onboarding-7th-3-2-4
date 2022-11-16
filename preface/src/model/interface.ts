@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import type { TAccountStatusValue } from "@/lib/utils/changeAccountStatusFromNumberToKorean";
+import type { TAccountStatusKey } from "@/lib/utils/changeAccountStatusFromNumberToKorean";
 import type { TBrokersKey } from "@/lib/utils/changeBrokerCodeToKorean";
 
 export interface ServerError {
@@ -26,7 +26,7 @@ export interface AccountModel {
   user_id: number;
   uuid: string;
   broker_id: TBrokersKey;
-  status: TAccountStatusValue;
+  status: TAccountStatusKey;
   number: string;
   name: string;
   assets: string;
@@ -54,21 +54,22 @@ export interface UserModel {
 }
 
 export interface DashboardModel {
-  id?: number;
+  id: number;
   uuid: string;
-  user_name?: string;
-  user_id?: number;
-  broker_id?: TBrokersKey;
-  broker_name?: string;
-  status?: TAccountStatusValue;
-  status_kr?: string;
-  number?: string;
-  name?: string;
-  assets?: string;
-  payments?: string;
-  profit_rate?: string;
+  user_name: string;
+  user_id: number;
+  broker_id: TBrokersKey;
+  broker_name: string;
+  status: TAccountStatusKey;
+  status_kr: string;
+  number: string;
+  name: string;
+  assets: string;
+  payments: string;
+  profit_rate: string;
   is_profit: boolean | null;
-  is_active?: string;
-  created_at?: string;
-  updated_at?: string;
+  is_active: boolean;
+  is_active_kr: string;
+  created_at: string;
+  updated_at: string;
 }

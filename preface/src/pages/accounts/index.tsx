@@ -101,7 +101,12 @@ const Accounts: NextPageWithLayout = () => {
               </span>
               <span className="left center ">{account?.name}</span>
               <span className="right profit number">
-                {account.is_profit ? "+" : "-"} {account?.assets} 원
+                {account.is_profit
+                  ? "+"
+                  : account.is_profit === null
+                  ? ""
+                  : "-"}{" "}
+                {account?.assets} 원
               </span>
               <span className="right number">{account?.payments} 원</span>
               <span className="center">{account?.is_active}</span>
@@ -212,7 +217,6 @@ const AccountItem = styled.div<{ is_profit: boolean | null | undefined }>`
       } else if (is_profit === null) {
         return css`
           color: black;
-          background-color: white;
         `;
       }
       return css`

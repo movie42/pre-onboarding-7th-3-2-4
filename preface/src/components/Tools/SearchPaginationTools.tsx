@@ -36,9 +36,9 @@ const SearchPaginationTools = React.forwardRef<Ref, ISearchPaginationTools>(
             type="text"
           />
         </Form>
-        <Link className="bg-white" href="/accounts/create">
-          새로운 계좌 만들기
-        </Link>
+        <LinkContainer>
+          <Link href="/accounts/create">새로운 계좌 만들기</Link>
+        </LinkContainer>
         <PagiNation>
           {pagination?.map((value, index) => (
             <Page
@@ -69,10 +69,11 @@ const ToolsContainer = styled.div`
   height: 5rem;
   margin-bottom: 1rem;
   padding: 1rem;
+  min-width: 900px;
 `;
 
 const Form = styled.form`
-  width: 30%;
+  width: 40%;
   input {
     width: 100%;
     font-size: 1.3rem;
@@ -103,5 +104,22 @@ const Page = styled.li<{ isActive: boolean }>`
   }}
   &:hover {
     background-color: ${(props) => props.theme.colors.primary3};
+  }
+`;
+
+const LinkContainer = styled.div`
+  box-sizing: border-box;
+  a {
+    color: white;
+    border-radius: 1rem;
+    display: inline-block;
+    padding: 1rem;
+    background-color: ${(props) => props.theme.colors.primary4};
+    font-size: 1.2rem;
+    &:hover {
+      font-weight: bolder;
+      color: ${(props) => props.theme.colors.primary4};
+      background-color: ${(props) => props.theme.colors.primary5};
+    }
   }
 `;
