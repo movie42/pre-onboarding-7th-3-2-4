@@ -9,10 +9,10 @@ class AccountsService extends AxiosHTTPClient implements IAccountsService {
   }
 
   getAccounts = async <TData>(
-    endpoint: string,
+    query: string | string[],
     config?: AxiosRequestConfig
   ) => {
-    const response = await this.instance.get<TData>(endpoint, {
+    const response = await this.instance.get<TData>(`/accounts${query}`, {
       ...config
     });
 
@@ -20,23 +20,37 @@ class AccountsService extends AxiosHTTPClient implements IAccountsService {
   };
 
   getAccountDetail = async <TData>(
-    endpoint: string,
+    query: string | string[],
     config?: AxiosRequestConfig
   ) => {
-    const response = await this.instance.get<TData>(endpoint, { ...config });
+    const response = await this.instance.get<TData>(`/accounts?q=${query}`, {
+      ...config
+    });
     return response;
   };
 
   createAccount = async <TData, TVariable>(
-    endpoint: string,
     data: TVariable,
     config?: AxiosRequestConfig
   ) => {
     const response = await this.instance.post<TData>(
-      endpoint,
+      "/accounts",
       { ...data },
       { ...config }
     );
+    return response;
+  };
+
+  updateAccount = async <TData, TVariable extends { id: number }>(
+    data: TVariable,
+    config?: AxiosRequestConfig
+  ) => {
+    const response = await this.instance.put<TData>(
+      `/accounts/${data.id}`,
+      { ...data },
+      { ...config }
+    );
+
     return response;
   };
 }

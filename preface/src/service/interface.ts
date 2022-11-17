@@ -1,10 +1,10 @@
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 export interface IAuthService {
-  login: <TData>(
-    endpoint: string,
-    { email, password }: IUserVariable
-  ) => Promise<AxiosResponse<TData> | AxiosError | undefined>;
+  login: <TData>({
+    email,
+    password
+  }: IUserVariable) => Promise<AxiosResponse<TData> | AxiosError | undefined>;
 }
 
 export interface IUserVariable {
@@ -14,17 +14,21 @@ export interface IUserVariable {
 
 export interface IAccountsService {
   getAccounts: <TData>(
-    endpoint: string,
+    query: string | string[],
     config?: AxiosRequestConfig
   ) => Promise<AxiosResponse<TData> | AxiosError | undefined>;
 
   getAccountDetail: <TData>(
-    endpoint: string,
+    query: string | string[],
     config?: AxiosRequestConfig
   ) => Promise<AxiosResponse<TData> | AxiosError | undefined>;
 
   createAccount: <TData, TVariable>(
-    endpoint: string,
+    data: TVariable,
+    config?: AxiosRequestConfig
+  ) => Promise<AxiosResponse<TData> | AxiosError | undefined>;
+
+  updateAccount: <TData, TVariable extends { id: number }>(
     data: TVariable,
     config?: AxiosRequestConfig
   ) => Promise<AxiosResponse<TData> | AxiosError | undefined>;

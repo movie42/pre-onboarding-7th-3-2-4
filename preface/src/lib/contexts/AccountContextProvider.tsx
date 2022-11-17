@@ -15,10 +15,10 @@ export const useAccountContext = () => useContext(AccountsContext);
 const AccountsContextProvider = ({
   children
 }: IAccountContextProviderProps) => {
-  const accountService = new AccountsService(CLIENT_BASE_URL);
+  const accountsService = new AccountsService(CLIENT_BASE_URL);
 
   return (
-    <AccountsContext.Provider value={accountService}>
+    <AccountsContext.Provider value={accountsService}>
       {children}
     </AccountsContext.Provider>
   );

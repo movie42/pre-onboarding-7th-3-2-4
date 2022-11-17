@@ -1,5 +1,5 @@
 export const SERVER_BASE_URL = "http://localhost:4000";
-export const CLIENT_BASE_URL = "http://localhost:3000";
+export const CLIENT_BASE_URL = "http://localhost:3000/api";
 export const COOKIE_KEY = "preface-cookies";
 export const BROKERS = [
   { id: "209", name: "유안타증권" },

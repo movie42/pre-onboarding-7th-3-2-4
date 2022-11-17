@@ -31,7 +31,7 @@ export default async function accountHandler(
     switch (method) {
       case "GET": {
         const response = await accountService.getAccountDetail<AccountModel[]>(
-          `/accounts?q=${accountId}`
+          `${accountId}`
         );
         const [account] = response.data;
         return res.status(200).json({ account });

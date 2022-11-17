@@ -13,8 +13,7 @@ const useCreateNewAccount = () => {
   const { push } = useRouter();
 
   return useMutation<AxiosResponse, AxiosError, Omit<AccountModel, "id">>(
-    async (account) =>
-      await accountsService.createAccount("/api/accounts", account),
+    async (account) => await accountsService.createAccount(account),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["accounts"]);

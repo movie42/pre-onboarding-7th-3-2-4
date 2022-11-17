@@ -27,9 +27,7 @@ export default async function accountHandler(
     switch (method) {
       case "GET": {
         const response = await account.getAccounts<AccountModel[]>(
-          `/accounts?q=${
-            searchString ? searchString : ""
-          }&_sort=${_sort}&_order=${_order}&_page=${_page}&_limit=${_limit}`
+          `?q=${searchString}&_sort=${_sort}&_order=${_order}&_page=${_page}&_limit=${_limit}`
         );
         const responseHeaders = response.headers as AxiosResponseHeaders;
         const accounts = response.data;
@@ -40,7 +38,7 @@ export default async function accountHandler(
         const response = await account.createAccount<
           AccountModel,
           AccountModel
-        >("/accounts", body);
+        >(body);
         const responseHeaders = response.headers as AxiosResponseHeaders;
         const accounts = response.data;
         const totalItems = Number(responseHeaders.get("x-total-count"));

@@ -18,7 +18,7 @@ export default async function loginHandler(
       body: { email, password }
     } = req;
 
-    const response = await authService.login<ServerResponse>("/login", {
+    const response = await authService.login<ServerResponse>({
       email,
       password
     });

@@ -7,15 +7,12 @@ class AuthService extends AxiosHTTPClient implements IAuthService {
     super(baseURL, config);
   }
 
-  login = async <TData>(
-    endPoint: string,
-    { email, password }: IUserVariable
-  ) => {
+  login = async <TData>({ email, password }: IUserVariable) => {
     const response = await this.instance.post<
       TData,
       AxiosResponse<TData, any>,
       IUserVariable
-    >(endPoint, {
+    >("/login", {
       email,
       password
     });

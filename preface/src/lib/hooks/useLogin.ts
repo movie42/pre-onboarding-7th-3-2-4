@@ -16,8 +16,7 @@ const useLogin = () => {
     AxiosError<ServerError>,
     IUserVariable
   >(
-    async ({ email, password }) =>
-      await authService.login("/api/login", { email, password }),
+    async ({ email, password }) => await authService.login({ email, password }),
     {
       onSuccess: (data) => {
         router.push("/accounts");
